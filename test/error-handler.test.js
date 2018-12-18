@@ -204,5 +204,18 @@ describe('Feathers Mongoose Error Handler', () => {
         expect(error.errors).to.deep.equal({ name: 'Kate' });
       }
     });
+
+    it('has the correct errors object #3', async () => {
+      let e = Error('E11000 duplicate key error collection: db.users index: firstName_1_lastName_1 dup key: { : "Kate", : "Smith" }');
+      e.name = 'MongoError';
+      e.code = 11000;
+
+      try {
+        await errorHandler(e);
+        throw new Error('Should never get here');
+      } catch (error) {
+        expect(error.errors).to.deep.equal({ firstName: 'Kate', lastName: 'Smith' });
+      }
+    });
   });
 });
